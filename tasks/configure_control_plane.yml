@@ -1,0 +1,87 @@
+---
+- name: Pull images
+  shell: kubeadm config images pull
+  when: not cluster_is_configured.stat.exists
+
+- name: Generate a certificate key
+  shell: kubeadm certs certificate-key
+  register: certificate_key_new_cluster
+  when: 
+    - not cluster_is_configured.stat.exists
+    - groups['control_plane'][0] == inventory_hostname
+
+- name: Generate a new certificate key if cluster already configured
+  shell: kubeadm init phase upload-certs --upload-certs | egrep '^[a-z,0-9]'
+  register: certificate_key_existing_cluster
+  when: 
+    - cluster_is_configured.stat.exists
+    - groups['control_plane'][0] == inventory_hostname
+  changed_when: false
+
+- name: Set Certificate Key
+  set_fact:
+    certificate_key: "{{ certificate_key_new_cluster if not cluster_is_configured.stat.exists else  certificate_key_existing_cluster  }}"
+  changed_when: false
+  no_log: true
+
+- name: Initialize cluster on first Control Plane
+  shell: |
+    sudo kubeadm init \
+      --control-plane-endpoint "{{ control_plane_endpoint }}:{{ control_plane_endpoint_port }}" \
+      --upload-certs \
+      --certificate-key "{{ certificate_key.stdout }}"
+  when: 
+    - not cluster_is_configured.stat.exists
+    - groups['control_plane'][0] == inventory_hostname
+
+- name: Install Network plugin
+  shell: |
+    kubectl apply -f "{{ network_plugin_url }}"
+  register: network_plugin
+  until: network_plugin is succeeded
+  retries: 10
+  delay: 6
+  environment:
+    KUBECONFIG: /etc/kubernetes/admin.conf
+  when: 
+    - not cluster_is_configured.stat.exists
+    - groups['control_plane'][0] == inventory_hostname
+
+- name: Create Join command
+  shell: echo "$( kubeadm token create --print-join-command) --control-plane --certificate-key {{ certificate_key.stdout }}"
+  register: kubeadm_join
+  when: 
+    - groups['control_plane'][0] == inventory_hostname
+  changed_when: false
+
+- name: Set Control Plane join command
+  set_fact:
+    kubeadm_join_control_plane: "{{ hostvars[groups['control_plane'][0]].kubeadm_join.stdout }}"
+  when:
+    - not cluster_is_configured.stat.exists
+    
+- name: Join secondary Control Plane
+  shell: "{{ kubeadm_join_control_plane }}"
+  when: 
+    - groups['control_plane'][0] != inventory_hostname
+    - not cluster_is_configured.stat.exists
+
+- name: Install Network plugin on secondary Control Plane
+  shell: |
+    kubectl apply -f "{{ network_plugin_url }}"
+  register: network_plugin
+  until: network_plugin is succeeded
+  retries: 10
+  delay: 6
+  environment:
+    KUBECONFIG: /etc/kubernetes/admin.conf
+  when: 
+    - not cluster_is_configured.stat.exists
+    - groups['control_plane'][0] != inventory_hostname
+
+- name: Create Join command to join Workers
+  shell: kubeadm token create --print-join-command
+  register: kubeadm_join_worker
+  when: 
+    - groups['control_plane'][0] == inventory_hostname
+  changed_when: false

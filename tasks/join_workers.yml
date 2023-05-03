@@ -1,0 +1,4 @@
+---
+- name: Join workers
+  shell: "{{ hostvars[groups['control_plane'][0]].kubeadm_join_worker.stdout }}"
+  when: not cluster_is_configured.stat.exists
