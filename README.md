@@ -26,7 +26,7 @@ node-04 ansible_host=192.168.0.214
 
 [control_plane]
 node-01 ansible_host=192.168.0.211
-node-02 ansible_host=192.168.0.211
+node-02 ansible_host=192.168.0.212
 
 [workers]
 node-03 ansible_host=192.168.0.213
