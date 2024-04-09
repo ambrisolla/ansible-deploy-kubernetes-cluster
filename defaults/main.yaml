@@ -1,8 +1,8 @@
 # set username ( access needs to be done by ssh-key and needs to be )
-username: brisa
+username: cloud-user
 
 # set kubernetes version
-kubernetes_version: 1.27.1-0
+kubernetes_version: 1.27
 
 # set containerd version
 containerd_version: 1.6.20
@@ -11,7 +11,7 @@ containerd_version: 1.6.20
 cni_plugins_version: 1.2.0
 
 # kubeadm configurations
-control_plane_endpoint: load-balancer
+control_plane_endpoint: 192.168.0.91
 control_plane_endpoint_port: 6443
 
 # network plugin
