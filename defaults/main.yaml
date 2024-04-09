@@ -2,10 +2,10 @@
 username: cloud-user
 
 # set kubernetes version
-kubernetes_version: 1.27
+kubernetes_version: 1.29
 
 # set containerd version
-containerd_version: 1.6.20
+containerd_version: 1.7.15
 
 # set cni plugins version
 cni_plugins_version: 1.2.0
