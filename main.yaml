@@ -17,7 +17,7 @@
         file: tasks/configure_control_plane.yml
       when: inventory_hostname in groups['control_plane']
     
-    #- name: Configure Workers nodes
-    #  ansible.builtin.include_tasks:
-    #    file: tasks/join_workers.yml
-    #  when: "'workers' in group_names"    
+    - name: Configure Workers nodes
+      ansible.builtin.include_tasks:
+        file: tasks/join_workers.yml
+      when: "'workers' in group_names"    
