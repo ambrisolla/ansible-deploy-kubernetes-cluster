@@ -92,9 +92,9 @@
     state: directory
 
 - name: Configure Containerd
-  ansible.builtin.copy:
-    src: files/config.toml
-    dest: /etc/containerd/config.toml
+  ansible.builtin.shell:
+    cmd: /usr/local/bin/containerd config default | sed 's/SystemdCgroup = false/SystemdCgroup = true/g' > /etc/containerd/config.toml
+    
 
 - name: Configure Containerd service
   ansible.builtin.get_url:
