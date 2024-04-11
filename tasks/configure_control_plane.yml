@@ -40,19 +40,19 @@
     - not cluster_is_configured.stat.exists
     - groups['control_plane'][0] == inventory_hostname
 
-- name: Install Network plugin
-  shell: |
-    kubectl apply -f "{{ network_plugin_url }}"
-  register: network_plugin
-  until: network_plugin is succeeded
-  retries: 10
-  delay: 6
-  environment:
-    KUBECONFIG: /etc/kubernetes/admin.conf
-  when: 
-    - not cluster_is_configured.stat.exists
-    - groups['control_plane'][0] == inventory_hostname
-
+#- name: Install Network plugin
+#  shell: |
+#    kubectl apply -f "{{ network_plugin_url }}"
+#  register: network_plugin
+#  until: network_plugin is succeeded
+#  retries: 10
+#  delay: 6
+#  environment:
+#    KUBECONFIG: /etc/kubernetes/admin.conf
+#  when: 
+#    - not cluster_is_configured.stat.exists
+#    - groups['control_plane'][0] == inventory_hostname
+#
 #- name: Create Join command
 #  shell: echo "$( kubeadm token create --print-join-command) --control-plane --certificate-key {{ certificate_key.stdout }}"
 #  register: kubeadm_join
