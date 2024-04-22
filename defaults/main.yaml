@@ -20,3 +20,34 @@ network_plugin_url: https://raw.githubusercontent.com/projectcalico/calico/v3.27
 # Set etcd topology 
 # https://kubernetes.io/docs/setup/production-environment/tools/kubeadm/ha-topology/
 external_etcd: false
+
+# add cluster features
+feature:
+  - namespace: argocd
+    name: argocd
+    type: manifest
+    url: https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
+    enabled: true
+  - namespace: kong
+    name: kong
+    type: helm
+    repo: https://charts.konghq.com
+    chart_ref: kong/kong
+    enabled: true
+  - namespace: kyverno
+    name: kyverno
+    type: helm
+    repo: https://kyverno.github.io/kyverno/
+    chart_ref: kyverno/kyverno
+    enabled: true
+  - namespace: cert-manager-crd
+    name: cert-manager-crd
+    type: manifest
+    url:  https://github.com/cert-manager/cert-manager/releases/download/v1.14.4/cert-manager.crds.yaml
+    enabled: true
+  - namespace: cert-manager
+    name: cert-manager
+    type: helm
+    repo: https://charts.jetstack.io
+    chart_ref: cert-manager/cert-manager
+    enabled: true

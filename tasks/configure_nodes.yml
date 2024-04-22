@@ -36,8 +36,26 @@
       - tar
       - wget
       - runc
+      - python3
+      - python3-pip
     disable_excludes: kubernetes
 
+- name: Download Helm
+  ansible.builtin.unarchive:
+    src: https://get.helm.sh/helm-canary-linux-amd64.tar.gz
+    dest: /tmp
+    remote_src: yes
+  when:
+    - groups['control_plane'][0] == inventory_hostname
+
+- name: Install Helm
+  ansible.builtin.command: cp /tmp/linux-amd64/helm /usr/local/sbin/
+  when:
+    - groups['control_plane'][0] == inventory_hostname
+
+- name: Install kubernetes python package
+  ansible.builtin.pip:
+    name: kubernetes
 
 - name: Enable kubelet service
   ansible.builtin.systemd:

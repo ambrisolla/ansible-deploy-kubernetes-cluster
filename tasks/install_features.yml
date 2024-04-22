@@ -1,0 +1,51 @@
+- name: Download {{ item.name }} manifest
+  ansible.builtin.get_url:
+    url: "{{ item.url }}"
+    dest: ~/manifest-{{ item.name }}.yaml
+    mode: '0664'
+  when:
+    - item.type == 'manifest'
+    - item.enabled
+
+- name: Create {{ item.namespace }} namespace
+  kubernetes.core.k8s:
+    name: "{{ item.namespace }}"
+    api_version: v1
+    kind: Namespace
+    state: present
+  environment: 
+    KUBECONFIG: /etc/kubernetes/admin.conf
+  when:
+    - item.type == 'manifest'
+    - item.enabled
+
+- name: Apply {{ item.name }} manifest
+  kubernetes.core.k8s:
+    state: present
+    src: ~/manifest-{{ item.name }}.yaml
+    namespace: "{{ item.namespace }}"
+  when:
+    - item.type == 'manifest'
+    - item.enabled
+  environment: 
+    KUBECONFIG: /etc/kubernetes/admin.conf
+
+- name: Add {{ item.name }} helm repo
+  kubernetes.core.helm_repository:
+    name: "{{ item.name }}"
+    repo_url: "{{ item.repo }}"
+  when:
+    - item.type == 'helm'
+    - item.enabled
+
+- name: Deploy {{ item.name }}
+  kubernetes.core.helm:
+    name: "{{ item.name }}"
+    chart_ref: "{{ item.chart_ref }}"
+    release_namespace: "{{ item.namespace }}"
+    create_namespace: true
+  when:
+    - item.type == 'helm'
+    - item.enabled
+  environment: 
+    KUBECONFIG: /etc/kubernetes/admin.conf
