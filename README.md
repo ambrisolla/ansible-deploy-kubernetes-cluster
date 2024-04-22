@@ -6,10 +6,11 @@ This repository is used to deploy a Kubernetes cluster using Ansible.
  - Install and configure all prerequisites to configure Control Plane, Etcd and worker nodes;
  - Deploy multi-master cluster in <a href='https://kubernetes.io/docs/setup/production-environment/tools/kubeadm/ha-topology/' target='_blank'>stacked etc</a> mode;
  - Join worker nodes on Cluster;
+ - Enalbe plugins on deploy: ArgoCD, Kyverno, cert-manager, kong;
 
 ## OS support
 This playbook works on:
-  - Oracle Linux 8;
+  - Oracle Linux 9;
 
 ## Configurations
 
