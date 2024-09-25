@@ -21,12 +21,6 @@
   ansible.builtin.selinux:
     state: disabled
 
-- name: Disable firewalld
-  ansible.builtin.systemd:
-    name: firewalld
-    enabled: false
-    state: stopped
-
 - name: Install packages
   ansible.builtin.yum:
     name:
@@ -38,6 +32,8 @@
       - runc
       - python3
       - python3-pip
+      - iptables-services
+      - iptables-utils
     disable_excludes: kubernetes
 
 - name: Download Helm
