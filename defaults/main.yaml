@@ -2,20 +2,21 @@
 username: brisa
 
 # set kubernetes version
-kubernetes_version: 1.29
+kubernetes_version: 1.31
 
 # set containerd version
-containerd_version: 1.7.15
+containerd_version: 1.7.22
 
 # set cni plugins version
-cni_plugins_version: 1.4.1
+cni_plugins_version: 1.5.1
 
 # kubeadm configurations
 control_plane_endpoint: 192.168.1.150
 control_plane_endpoint_port: 6443
 
 # network plugin
-network_plugin_url: https://raw.githubusercontent.com/projectcalico/calico/v3.27.3/manifests/calico.yaml
+network_plugin_url: https://raw.githubusercontent.com/projectcalico/calico/v3.28.2/manifests/calico.yaml
+#network_plugin_url: https://github.com/flannel-io/flannel/releases/latest/download/kube-flannel.yml
 
 # Set etcd topology 
 # https://kubernetes.io/docs/setup/production-environment/tools/kubeadm/ha-topology/
@@ -51,3 +52,9 @@ feature:
     repo: https://charts.jetstack.io
     chart_ref: cert-manager/cert-manager
     enabled: false
+  - namespace: metallb
+    name: metallb
+    type: helm
+    repo: https://metallb.github.io/metallb
+    chart_ref: metallb/metallb
+    enabled: true

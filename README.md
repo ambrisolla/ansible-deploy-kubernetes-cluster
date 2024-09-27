@@ -10,7 +10,9 @@ This repository is used to deploy a Kubernetes cluster using Ansible.
 
 ## OS support
 This playbook works on:
-  - Oracle Linux 9;
+  - OL9;
+  - RHEL 9
+  - Rocky Linux 9;
 
 ## Configurations
 

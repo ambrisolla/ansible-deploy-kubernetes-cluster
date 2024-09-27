@@ -1,3 +1,8 @@
+- name: Check if cluster is configured
+  stat:
+    path: /etc/kubernetes/kubelet.conf
+  register: cluster_is_configured
+  
 - name: Download {{ item.name }} manifest
   ansible.builtin.get_url:
     url: "{{ item.url }}"

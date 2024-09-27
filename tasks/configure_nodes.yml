@@ -72,21 +72,18 @@
   ansible.builtin.sysctl:
     name: net.bridge.bridge-nf-call-iptables
     value: 1
-    sysctl_file: k8s.conf
     sysctl_set: True
 
 - name: Configure sysctl net.bridge.bridge-nf-call-ip6tables
   ansible.builtin.sysctl:
     name: net.bridge.bridge-nf-call-ip6tables
     value: 1
-    sysctl_file: k8s.conf
     sysctl_set: True
 
 - name: Configure sysctl net.ipv4.ip_forward
   ansible.builtin.sysctl:
     name: net.ipv4.ip_forward
-    value: 1
-    sysctl_file: k8s.conf
+    value: 1    
     sysctl_set: True
 
 - name: Download containerd
@@ -109,7 +106,6 @@
   ansible.builtin.shell:
     cmd: /usr/local/bin/containerd config default | sed 's/SystemdCgroup = false/SystemdCgroup = true/g' > /etc/containerd/config.toml
     
-
 - name: Configure Containerd service
   ansible.builtin.get_url:
     url: https://raw.githubusercontent.com/containerd/containerd/main/containerd.service

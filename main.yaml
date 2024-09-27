@@ -22,10 +22,9 @@
         file: tasks/join_workers.yml
       when: "'workers' in group_names"    
 
-    - name: Configure nodes
+    - name: Install features
       ansible.builtin.include_tasks:
         file: tasks/install_features.yml
       when: 
-        - cluster_is_configured.stat.exists
         - groups['control_plane'][0] == inventory_hostname
       with_items: "{{ feature }}"
