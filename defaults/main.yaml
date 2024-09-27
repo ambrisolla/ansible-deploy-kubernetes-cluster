@@ -34,7 +34,7 @@ feature:
     type: helm
     repo: https://charts.konghq.com
     chart_ref: kong/kong
-    enabled: true
+    enabled: false
   - namespace: kyverno
     name: kyverno
     type: helm
@@ -57,4 +57,10 @@ feature:
     type: helm
     repo: https://metallb.github.io/metallb
     chart_ref: metallb/metallb
+    enabled: true
+  - namespace: traefik
+    name: traefik
+    type: helm
+    repo: https://traefik.github.io/charts
+    chart_ref: traefik/traefik
     enabled: true

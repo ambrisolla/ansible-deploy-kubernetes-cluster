@@ -43,6 +43,12 @@
     - item.type == 'helm'
     - item.enabled
 
+- name: Check if charts/{{item.name}}/values.yml file exists
+  delegate_to: localhost
+  stat:
+    path: ./charts/{{item.name}}/values.yml
+  register: values_exists
+
 - name: Deploy {{ item.name }}
   kubernetes.core.helm:
     name: "{{ item.name }}"
@@ -52,5 +58,32 @@
   when:
     - item.type == 'helm'
     - item.enabled
+    - not values_exists.stat.exists
+  environment: 
+    KUBECONFIG: /etc/kubernetes/admin.conf
+
+- name: Copy charts/{{ item.name }}/values.yml to the target host
+  ansible.builtin.copy:
+    src: charts/{{ item.name }}/values.yml
+    dest: /tmp/{{item.name}}-chart-values.yml
+  when:
+    - item.type == 'helm'
+    - item.enabled
+    - values_exists.stat.exists
+  environment: 
+    KUBECONFIG: /etc/kubernetes/admin.conf
+
+- name: Deploy {{ item.name }} with values.yml
+  kubernetes.core.helm:
+    name: "{{ item.name }}"
+    chart_ref: "{{ item.chart_ref }}"
+    release_namespace: "{{ item.namespace }}"
+    create_namespace: true
+    values_files:
+      - /tmp/{{ item.name }}-chart-values.yml
+  when:
+    - item.type == 'helm'
+    - item.enabled
+    - values_exists.stat.exists
   environment: 
     KUBECONFIG: /etc/kubernetes/admin.conf
